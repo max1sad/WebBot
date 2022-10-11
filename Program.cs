@@ -2,7 +2,7 @@ using Telegram.Bot;
 using Newtonsoft.Json;
 using FootballTelegramBot;
 using FootballTelegramBot.Services;
-
+using FootballTelegramBot.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +23,20 @@ builder.Services.AddHttpClient("tgwebhook")
 
 // Dummy business-logic service
 builder.Services.AddScoped<HandleUpdateService>();
+builder.Services.AddSingleton<DBProvide>();
+builder.Services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+{
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+}));
 
+// Add framework services.
+/*services.AddMvc();
+services.Configure<MvcOptions>(options =>
+{
+    options.Filters.Add(new CorsAuthorizationFilterFactory("MyPolicy"));
+});*/
 // The Telegram.Bot library heavily depends on Newtonsoft.Json library to deserialize
 // incoming webhook updates and send serialized responses back.
 // Read more about adding Newtonsoft.Json to ASP.NET Core pipeline:
@@ -33,7 +46,7 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 var app = builder.Build();
 
 app.UseRouting();
-app.UseCors();
+app.UseCors("MyPolicy");
 
 app.UseEndpoints(endpoints =>
 {
@@ -48,5 +61,28 @@ app.UseEndpoints(endpoints =>
                                  new { controller = "Webhook", action = "Post" });
     endpoints.MapControllers();
 });
+app.Run(async (context) =>
+{
+    context.Response.ContentType = "text/html; charset=utf-8";
+
+    // если обращение идет по адресу "/postuser", получаем данные формы
+    if (context.Request.Path == "/postuser")
+    {
+        var form = context.Request.Form;
+        string name = form["name"];
+        string age = form["age"];
+        await context.Response.WriteAsync($"<div><p>Name: {name}</p><p>Age: {age}</p></div>");
+    }
+    else if (context.Request.Path == "/test.html")
+    {
+        await context.Response.SendFileAsync("html/test.html");
+    }
+    else
+    {
+        await context.Response.SendFileAsync("html/Index.html");
+    }
+
+});
+
 
 app.Run();

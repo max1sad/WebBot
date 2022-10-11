@@ -8,7 +8,10 @@ using Telegram.Bot;
 using FootballTelegramBot.Model;
 
 
-namespace FootballTelegramBot.Services;
+namespace FootballTelegramBot.Services
+{
+
+
 public class HandleUpdateService
 {
     private readonly ITelegramBotClient _botClient;
@@ -388,4 +391,5 @@ public class HandleUpdateService
         {
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
+}
 }
