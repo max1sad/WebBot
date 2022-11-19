@@ -10,6 +10,7 @@ namespace FootballTelegramBot.Model
         public int idLeague { get; set; }
         public int idNameTourney { get; set; }
         public int idTeams { get; set; }
-        public string? statusToutney { get; set; }
+        public string? statusRequest { get; set; }
+        
     }
 }

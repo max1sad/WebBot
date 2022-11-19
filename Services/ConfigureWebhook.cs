@@ -3,12 +3,12 @@ using Telegram.Bot.Types.Enums;
 
 namespace FootballTelegramBot.Services
 {
-    public class ConfigureWebhook : IHostedService
+    public  class ConfigureWebhook : IHostedService
     {
         private readonly ILogger<ConfigureWebhook> _logger;
         private readonly IServiceProvider _services;
         private readonly BotConfiguration _botConfig;
-
+        
         public ConfigureWebhook(ILogger<ConfigureWebhook> logger,
                                 IServiceProvider serviceProvider,
                                 IConfiguration configuration)
@@ -46,4 +46,5 @@ namespace FootballTelegramBot.Services
             await botClient.DeleteWebhookAsync(cancellationToken: cancellationToken);
         }
     }
+  
 }

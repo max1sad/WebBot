@@ -10,7 +10,7 @@ namespace FootballTelegramBot.Model
         public string nameTourney { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-        public string statusTourney { get; set; }
+        public string? statusTourney { get; set; }
 
     }
 }

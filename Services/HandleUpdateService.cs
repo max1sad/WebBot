@@ -40,11 +40,10 @@ public class HandleUpdateService
     public HandleUpdateService(ITelegramBotClient botClient, ILogger<HandleUpdateService> logger)
     {
         _botClient = botClient;
-        _logger = logger;
-       
+        _logger = logger;       
     }
 
-    public async Task EchoAsync(Update update)
+        public async Task EchoAsync(Update update)
     {
          StringParcers stringParcers = new StringParcers();
             var message = update.Message;
@@ -160,7 +159,7 @@ public class HandleUpdateService
                             string dat =  DateTime.Parse(stringArray[2] + ":" + stringArray[3]).ToString("dd-MM-yy HH:mm");
                            // Model.Match sad = new Model.Match();
                             dBProvide.CreateMatchTimeGame(new Model.Match { idTeams1 = int.Parse(stringArray[0]), idTeams2 = int.Parse(stringArray[1]),
-                            dateGame = DateTime.Parse(dat)
+                            dateGames = DateTime.Parse(dat)
                             });
                         }
                         else
@@ -229,7 +228,8 @@ public class HandleUpdateService
                             string idTeams = string.Join("\n", dBProvide.GetAllTeams().Where(l => l.nameTeams == stringArray[2]).Select(l => l.idTeams));
                             //запрос с номером 100- это вывод 1-го поля с типом числовым.
                             // добавляем команду в турнир
-                            dBProvide.CreateTourneyTeams(new Model.TourneyTeams() { idLeague = int.Parse(stringArray[0]),idNameTourney = int.Parse(stringArray[1]),idTeams = int.Parse(idTeams) });
+                            dBProvide.CreateTourneyTeams(new Model.TourneyTeams() 
+                            { idLeague = int.Parse(stringArray[0]),idNameTourney = int.Parse(stringArray[1]),idTeams = int.Parse(idTeams), statusRequest = "Waiting for confirmation" });
                             //добавялем всех игроков в таблицу игроки и первым запросом считаекм что капитан подал заявку и его номер пишем тоже.
                             dBProvide.CreatePlayerCapitan(new Model.Player() { FIO = stringArray[3], idPhone = message.Chat.Id.ToString() });
                             idPlayers = string.Join("\n", dBProvide.GetAllPlayer().Where(l => l.FIO == stringArray[3]).Select(l => l.idPlayer));
@@ -353,6 +353,7 @@ public class HandleUpdateService
 
        
     }
+     
     //функция выводит кнопки администратора
        private static ReplyKeyboardMarkup adminMenu()
         {

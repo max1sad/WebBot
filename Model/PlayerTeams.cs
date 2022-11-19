@@ -9,7 +9,7 @@ namespace FootballTelegramBot.Model
  
         public int idPlayerTeams{ get; set; }
         public int idTeams {get; set;}
-        public string teamCaptain{ get; set;}
+        public string? teamCaptain{ get; set;}
         public int idPlayer{ get; set;}
     }
 }

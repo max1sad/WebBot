@@ -8,6 +8,6 @@ namespace FootballTelegramBot.Model
     {
 
         public int idTeams {get;set;}
-        public string nameTeams{ get; set;}
+        public string? nameTeams{ get; set;}
     }
 }

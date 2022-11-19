@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My first Vue app</title>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <style type="text/css">
+        #leagueT {
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <b-card no-body>
+                <b-tabs card>
+                    <b-tab title="Tab 1" active>
+                        <div>
+                            <b-form inline>
+                                <label class="sr-only" for="inline-form-input-name">ФИО</label>
+                                <b-form-input id="inline-form-input-name"
+                                              class="mb-2 mr-sm-2 mb-sm-0"
+                                              style="width: 100px"
+                                              placeholder="Jane Doe"
+                                              v-model="fio"></b-form-input>
+                                <label class="sr-only" for="inline-form-input-username">идентификатор телеграмма</label>
+                                <b-form-input id="inline-form-input-username" class="mb-2 mr-sm-2 mb-sm-0" v-model="idPhone" style="width: 100px" placeholder="Username"></b-form-input>
+
+                                <b-button variant="primary" @click="savePlayer">Save</b-button>
+                            </b-form>
+                        </div>
+                        <br>
+                        <div>
+                            <b-table striped hover :items="items"></b-table>
+                        </div>
+                    </b-tab>
+                    <b-tab title="Турнир и Лига">
+                        <b-form inline>
+                            <div id="leagueT">
+                                <label></label>
+                                <label class="legue" for="inline-form-input-name">Название футбольной лиги</label>
+                                <b-form-input id="league-num"
+                                              style="width: 100px"
+                                              placeholder="Лига"
+                                              v-model="nameLeague"></b-form-input>
+                            </div>
+
+                            <br />
+                            <select v-model="getDate" style="width: 180px">
+                                <option v-for="option in arrDateInterval" v-bind:value="option.value">
+                                    {{ option.text }}
+                                </option>
+                            </select>
+                            <span>Выбрано: {{ getDate }}</span>
+                            <template>
+                                <b-row>
+                                    <b-col md="auto">
+                                        <b-calendar v-model="dateTurney" @context="onContext" locale="ru-RU"></b-calendar>
+                                    </b-col>
+                                    <b-col>
+                                        <p>Выбрана дата: <b>'{{ dateTurney }}'</b></p>
+                                    </b-col>
+                                </b-row>
+                            </template>
+                            <br />
+                            <b-form-input id="tourney-name"
+                                          style="width: 200px"
+                                          placeholder="Название турнира"
+                                          v-model="nameTourney"></b-form-input>
+                            <br>
+                            <br>
+                            <select v-model="chekTable" style="width: 180px">
+                                <option v-for="option in arrTableLeagueAndTurney" v-bind:value="option.value">
+                                    {{ option.text }}
+                                </option>
+                            </select>
+                            <span>Выбрано: {{ chekTable }}</span>
+                        </b-form>
+                        <br />
+                        <b-button variant="primary" @click="saveChekLeagueTurnir">Просмотреть/Сохранить</b-button>
+                        <br />
+                        <label>Таблица: </label>
+                        <b-table striped hover :items="league_turnir"></b-table>
+                    </b-tab>
+                    <b-tab title="Расписание матчей">
+                        <b-form name="RaspisanyM" inline>
+                            <label class="RaspisanyM" for="inline-form-input-name">Выберите турнир для добавления расписания</label>
+                            <br />
+                            <select v-model="nameTourney" style="width: 250px" @click="nameTurneyChek">
+                                <option v-for="option in arrNameTourney" v-bind:value="option.nameTourney">
+                                    {{ option.nameTourney }}
+                                </option>
+                            </select>
+                            <span>Выбрано: {{ nameTourney }}</span>
+                            <br />
+                            <label>Выбирите первую команду </label>
+                            <br />
+                            <select v-model="idTeams1" style="width: 250px" @click="nameTurneyChek">
+                                <option v-for="option in arrGameTeams" v-bind:value="option.idTeams">
+                                    {{ option.nameTeams }}
+                                </option>
+                            </select>
+                            <span>Выбрано: {{ idTeams1 }}</span>
+                            <br />
+                            <label>Выбирите вторую команду </label>
+                            <br />
+                            <select v-model="idTeams2" style="width: 250px" @click="nameTurneyChek">
+                                <option v-for="option in arrGameTeams" v-bind:value="option.idTeams">
+                                    {{ option.nameTeams }}
+                                </option>
+                            </select>
+                            <span>Выбрано: {{ idTeams2 }}</span>
+                            <br />
+                            <br />
+                            <label>Укажите дату игры</label>
+
+                            <template>
+                                <b-row>
+                                    <b-col md="auto">
+                                        <b-calendar v-model="dateGames" locale="ru-RU"></b-calendar>
+                                    </b-col>
+                                    <b-col>
+                                        <p>Выбрана дата: <b>'{{ dateGames }}'</b></p>
+                                    </b-col>
+                                </b-row>
+                            </template>
+                            <template>
+                                <div>
+                                    <label>Укажите время игры</label>
+
+                                    <b-form-timepicker v-model="timeGame" locale="ru-RU" label-no-time-selected="Укажите время игры"></b-form-timepicker>
+                                    <div class="mt-2">Время игры: '{{ timeGame }}'</div>
+                                </div>
+                            </template>
+                            <br />
+                            <b-button variant="primary" @click="saveChekGameMatch">Просмотреть/Сохранить</b-button>
+                            <br />
+                            <b-table striped hover :items="arrMatch"></b-table>
+                        </b-form>
+
+
+                    </b-tab>
+
+
+                   
+                    <b-tab title="Заявки на турнир">
+                        <b-from name="ZayvkaM" inline>
+                            <label class="ZayvkaM" for="inline-form-input-name">Заявки на турнир</label>
+                            <label>Выбирите номер заявки для подробного отчета</label>
+                            <br />
+                            <select v-model="idTourney" style="width: 250px" @click="chekZayvkaTournye">
+                                <option v-for="option in arrZayvkaTourney" v-bind:value="option.idTourney">
+                                    {{ option.idTourney }}
+                                </option>
+                            </select>
+                            <span>Выбрано: {{ idTourney }}</span>
+                            <br />
+                            <br />
+                            <div>
+                                <span v-for="user in arrNameTeamsTourneyLeague">{{ "Команда: " + user.nameTeams +"; Турнир: " + user.nameTourney +"; Лига: " + user.nameLeague}}</span>
+                                <br />
+                                <span>Список игроков команды</span>
+                                <ul>
+                                    <template v-for="user in arrPlaeyrTeams">
+                                        <li> {{ user.fio }} </li>
+                                    </template>
+                                </ul>
+                            </div>
+                            <b-button variant="primary" @click="saveZayvka">Принять</b-button>
+                            <b-button variant="primary" @click="DeleteZayvka">Отклонить</b-button>
+                        </b-from>
+                    </b-tab>
+                </b-tabs>
+            </b-card>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                fio: "",
+                idPhone: "",
+                items: [],
+
+                nameLeague: "",
+                chekTable: null,
+                league_turnir: [],
+                arrTableLeagueAndTurney: [
+                    { text: 'Лига', value: 'league' },
+                    { text: 'Турнир', value: 'nameTourney' }
+                ],
+
+                dateTurney: '',
+                startDate: null,
+                endDate: null,
+                nameTourney: null,
+                arrDateInterval: [
+                    { text: 'Дата старта', value: 'startDate' },
+                    { text: 'Дата окончания', value: 'endDate' }
+                ],
+                getDate: null,
+                //context: null
+                /* переменные для раздела "Расписание матчей"*/
+                //nameTourney: null,
+                idTeams1: null,
+                idTeams2: null,
+                timeGame: null,
+                dateGames: null,
+                arrGameTeams: [],
+                arrNameTourney: [],
+                arrMatch: [],
+
+                /*заявка на участие в турнире*/
+                idTourney: null,
+                arrZayvkaTourney: [],
+                arrNameTeamsTourneyLeague: [],
+                arrPlaeyrTeams: [],
+
+
+
+            },
+            methods: {
+
+
+                /*Вкладка Турнир и Лига добавление, просмотр. */
+
+                onContext(ctx) {
+                    this.context = ctx;
+                    if (this.getDate == "startDate") {
+                        this.startDate = this.dateTurney;
+                        //alert("Дата начала:  " + this.startDate);
+                    }
+                    if (this.getDate == "endDate") {
+                        this.endDate = this.dateTurney;
+                        // alert("Дата окончания:  " + this.endDate);
+                    }
+                },
+                saveChekLeagueTurnir: function () {
+                    if (this.nameTourney != null && this.startDate != null && this.endDate != null) {
+                        alert("Название турнира: " + this.nameTourney + " Дата начала: " + this.startDate + " Дата окончания: " + this.endDate);
+                        let tourney = { nameTourney: this.nameTourney, startDate: this.startDate, endDate: this.endDate };
+                        let config = {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json'
+                            }
+                        };
+                        axios
+                            .post('https://localhost:7257/api/AdminForms/CreateTourney', JSON.stringify(tourney), config)
+                            .then(responseCreateTourney => {
+                                console.log(responseCreateTourney);
+                                alert("Запись добавена");
+                            });
+                        this.nameTourney = null;
+                        this.startDate = null;
+                        this.endDate = null;
+                    }
+                    if (this.nameLeague != "") {
+                        let league = { nameLeague: this.nameLeague };
+                        axios
+                            .post('https://localhost:7257/api/AdminForms/CreateLeague', league)
+                            .then(response => {
+                                console.log(response);
+                                alert("Запись добавена");
+                            });
+                        this.nameLeague = "";
+                    }
+                    if (this.chekTable != null) {
+                        if (this.chekTable == "league") {
+                            axios
+                                .get('https://localhost:7257/api/AdminForms/GetLeague')
+                                .then(responseLeague => {
+                                    console.log(responseLeague);
+                                    this.league_turnir = responseLeague.data;
+                                });
+                        }
+                        if (this.chekTable == "nameTourney") {
+                            axios
+                                .get('https://localhost:7257/api/AdminForms/GetTourney')
+                                .then(responseTourney => {
+                                    console.log(responseTourney);
+                                    this.league_turnir = responseTourney.data;
+                                });
+                        }
+                        this.chekTable = null;
+                    }
+
+                },
+
+                /* раздел для функций раздела "Расписание матчей"*/
+                /*onContextGame(ctx) {
+                    this.context = ctx;
+                    if (this.dateGames != null) {
+                        alert("testtt");
+                    }
+
+                },*/
+                saveChekGameMatch: function () {
+                    if (this.dateGames != null && this.timeGame != null && this.idTeams2 != null) {
+                        this.dateGames = this.dateGames + " " + this.timeGame;
+                        let matchAdd = { idTeams1: this.idTeams1, idTeams2: this.idTeams2, dateGames: this.dateGames }
+                        alert(this.dateGames + "  " + this.idTeams1 + "  " + this.idTeams2);
+                        let config = {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json'
+                            }
+                        };
+                        axios
+                            .post('https://localhost:7257/api/AdminForms/PostMatchAdd', JSON.stringify(matchAdd), config)
+                            .then(responseMatch => {
+                                console.log(responseMatch);
+                                alert("Запись добавена");
+                            });
+                    }
+                    else {
+                        
+                        axios
+                            .get('https://localhost:7257/api/AdminForms/GetMatch')
+                            .then(responseMatch => {
+                                console.log(responseMatch);
+                                this.arrMatch = responseMatch.data;
+                            });
+                    }
+                },
+                nameTurneyChek: function () {
+                    if (this.nameTourney != null) {
+                        let nameTourn = { nameTourney: this.nameTourney };
+                        axios
+                            .post('https://localhost:7257/api/AdminForms/PostTourneyName', nameTourn)
+                            .then(responseNameTourney => {
+                                console.log(responseNameTourney);
+                                //alert("Запись добавена");
+                                //window.location.reload();
+                                axios
+                                    .get('https://localhost:7257/api/AdminForms/GetNameTeamsTourney')
+                                    .then(responseTeams => {
+                                        console.log(responseTeams);
+                                        this.arrGameTeams = responseTeams.data;
+                                    });
+                            });
+
+                    }
+
+                },
+                /*Раздел прием заявок на турнир.*/
+                chekZayvkaTournye: function () {
+                    if (this.idTourney != null) {
+                        let idTourn = { idTourney: this.idTourney };
+                        axios
+                            .post('https://localhost:7257/api/AdminForms/PostNotTourney', idTourn)
+                            .then(response => {
+                                console.log(response); 
+                                axios
+                                    .get('https://localhost:7257/api/AdminForms/GetNameTeamsTourneyLeague')
+                                    .then(responseName => {
+                                        console.log(responseName);
+                                        this.arrNameTeamsTourneyLeague = responseName.data;                                        
+                                    });
+                                axios
+                                    .get('https://localhost:7257/api/AdminForms/GetZayvkaFIO')
+                                    .then(responseNameFio => {
+                                        console.log(responseNameFio);
+                                        this.arrPlaeyrTeams = responseNameFio.data;
+                                    });
+
+                            });
+                    }
+                },
+                saveZayvka: function () {
+                    if (this.idTourney != null) {
+                        let idTourn = { idTourney: this.idTourney };
+                        axios
+                            .post('https://localhost:7257/api/AdminForms/UpdateStatusRequest', idTourn)
+                            .then(response => {
+                                console.log(response);
+                                alert("Заявка принята");
+                            });
+                    }
+            
+                },
+                DeleteZayvka: function () {
+                    if (this.idTourney != null) {
+                        let idTourn = { idTourney: this.idTourney };
+                        axios
+                            .delete('https://localhost:7257/api/AdminForms/DeleteZayvka')
+                            .then(response => {
+                                console.log(response);
+                            });
+                    }
+                },
+                
+                /* первая вкладка*/
+                savePlayer: function () {
+                    let player = { fio: this.fio, idPhone: this.idPhone };
+                    axios
+                        .post('https://localhost:7257/api/AdminForms/PostPlayer', player)
+                        .then(response => {
+                            console.log(response);
+                            alert("Запись добавена");
+                            window.location.reload();
+                        });
+                }
+            },
+            mounted() {
+                axios
+                    .get('https://localhost:7257/api/AdminForms/GetPlayer')
+                    .then(response => {
+                        console.log(response);
+                        this.items = response.data;
+                    });
+                axios
+                    .get('https://localhost:7257/api/AdminForms/GetTourney')
+                    .then(responseTourney => {
+                        console.log(responseTourney);
+                        this.arrNameTourney = responseTourney.data;
+                    });
+                axios
+                    .get('https://localhost:7257/api/AdminForms/GetNotTourney')
+                    .then(responseNotZayvka => {
+                        console.log(responseNotZayvka);
+                        this.arrZayvkaTourney = responseNotZayvka.data;
+                    });
+            }
+        })
+    </script>
+</body>
+
+</html>
